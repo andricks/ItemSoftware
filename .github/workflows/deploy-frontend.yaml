@@ -3,11 +3,11 @@ name: Deploy Web App - Frontend
 on:
   push:
     branches:
-      - master  # Use the branch you use for production
-      
+      - main  # Use the branch you use for production
+
 jobs:
   host-1:
-    runs-on: self-hosted 
+    runs-on: CRUD 
     steps:
       - uses: actions/checkout@v3
       
@@ -19,19 +19,15 @@ jobs:
       
       # Install dependencies
       - name: Install Dependencies
-        working-directory: .
         run: npm install
       
-      # Create .env file in public directory
       - name: Adding env file
-        run: echo "REACT_APP_API_URL=${{ secrets.BACKEND_URL }}" > .env
-
-      # Build the React app in the public directory
-      - name: Build React App
-        working-directory: client
         run: |
-          npm install
-          npm run build
+          echo REACT_APP_API_URL="${{ secrets.BACKEND_URL }}" > .env
+
+      # Build the React app
+      - name: Build React App
+        run: npm run build
 
       # Set up SSH key from GitHub Secrets
       - name: Set up SSH key
@@ -46,7 +42,6 @@ jobs:
 
       # Deploy to remote host via SSH
       - name: Deploy to Remote Server
-        working-directory: .
         run: |
           echo "====== Deploy to production server ======"
           echo "====== Sync local and remote directory ======"
@@ -68,19 +63,15 @@ jobs:
       
       # Install dependencies
       - name: Install Dependencies
-        working-directory: client 
         run: npm install
       
-      # Create .env file in public directory
       - name: Adding env file
-        run: echo "REACT_APP_API_URL=${{ secrets.BACKEND_URL }}" > .env
-
-      # Build the React app in the public directory
-      - name: Build React App
-        working-directory: .
         run: |
-          npm install
-          npm run build
+          echo REACT_APP_API_URL="${{ secrets.BACKEND_URL }}" > .env
+
+      # Build the React app
+      - name: Build React App
+        run: npm run build
 
       # Set up SSH key from GitHub Secrets
       - name: Set up SSH key
@@ -95,7 +86,6 @@ jobs:
 
       # Deploy to remote host via SSH
       - name: Deploy to Remote Server
-        working-directory: .
         run: |
           echo "====== Deploy to production server ======"
           echo "====== Sync local and remote directory ======"
@@ -104,3 +94,8 @@ jobs:
         env:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_HOST: ${{ secrets.SSH_HOST2 }}
+
+  
+
+
+
