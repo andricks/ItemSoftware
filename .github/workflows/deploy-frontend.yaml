@@ -3,11 +3,11 @@ name: Deploy Web App - Frontend
 on:
   push:
     branches:
-      - main  # Use the branch you use for production
+      - master  # Use the branch you use for production
 
 jobs:
   host-1:
-    runs-on: self-hosted  
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3
       
@@ -19,18 +19,19 @@ jobs:
       
       # Install dependencies
       - name: Install Dependencies
+        working-directory: ./ 
         run: npm install
-        working-directory: ./
       
+      # Create .env file in public directory
       - name: Adding env file
-        run: |
-          echo REACT_APP_API_URL="${{ secrets.BACKEND_URL }}" > .env
-        working-directory: ./
+        run: echo "REACT_APP_API_URL=${{ secrets.BACKEND_URL }}" > Frontend/inventory_management_system/.env
 
-      # Build the React app
+      # Build the React app in the public directory
       - name: Build React App
-        run: npm run build
-        working-directory: ./
+        working-directory: ItemSoftware
+        run: |
+          npm install
+          npm run build
 
       # Set up SSH key from GitHub Secrets
       - name: Set up SSH key
@@ -45,6 +46,7 @@ jobs:
 
       # Deploy to remote host via SSH
       - name: Deploy to Remote Server
+        working-directory: ItemSoftware
         run: |
           echo "====== Deploy to production server ======"
           echo "====== Sync local and remote directory ======"
@@ -53,9 +55,8 @@ jobs:
         env:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_HOST: ${{ secrets.SSH_HOST1 }}
-        working-directory: ./
   host-2:
-    runs-on: self-hosted  
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3
       
@@ -67,18 +68,19 @@ jobs:
       
       # Install dependencies
       - name: Install Dependencies
+        working-directory: ItemSoftware
         run: npm install
-        working-directory: ./frontend
       
+      # Create .env file in public directory
       - name: Adding env file
-        run: |
-          echo REACT_APP_API_URL="${{ secrets.BACKEND_URL }}" > .env
-        working-directory: ./
+        run: echo "REACT_APP_API_URL=${{ secrets.BACKEND_URL }}" > Frontend/inventory_management_system/.env
 
-      # Build the React app
+      # Build the React app in the public directory
       - name: Build React App
-        run: npm run build
-        working-directory: ./
+        working-directory: ItemSoftware
+        run: |
+          npm install
+          npm run build
 
       # Set up SSH key from GitHub Secrets
       - name: Set up SSH key
@@ -93,6 +95,7 @@ jobs:
 
       # Deploy to remote host via SSH
       - name: Deploy to Remote Server
+        working-directory: ItemSoftware
         run: |
           echo "====== Deploy to production server ======"
           echo "====== Sync local and remote directory ======"
@@ -101,4 +104,3 @@ jobs:
         env:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_HOST: ${{ secrets.SSH_HOST2 }}
-        working-directory: ./
