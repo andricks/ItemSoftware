@@ -20,7 +20,7 @@ jobs:
         working-directory: api
         run: |
           npm install
-          echo MONGODB_URI = "mongodb+srv://aestradaa10:8C1lW1hktkdWvCda@database.2bnxshh.mongodb.net/?retryWrites=true&w=majority&appName=database" > .env
+          echo MONGODB_URI = "mongodb+srv://aestradaa10:8C1lW1hktkdWvCda@database.2bnxshh.mongodb.net/?retryWrites=true&w=majority&appName=database"> .env
 
       - name: Set up SSH key
         run: |
