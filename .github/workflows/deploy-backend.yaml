@@ -3,87 +3,50 @@ name: Deploy Web App - Backend
 on:
   push:
     branches:
-      - main  # Use the branch you use for production
+      - main  # Use the branch que utilizas para producción
     
 jobs:
-  host-1:
+  deploy:
     runs-on: CRUD  # Ajusta el runner si es necesario
+    strategy:
+      matrix:
+        host: [host1, host2]  # Configurar dos hosts para el despliegue
     steps:
       - uses: actions/checkout@v3
 
-      # Setup Node.js with version 20
+      # Setup Node.js con la versión 20
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
           node-version: 20
       
-      # Install dependencies
-      - name: Install Dependencies
+      # Instalar dependencias y construir el proyecto
+      - name: Instalar dependencias y construir proyecto
         run: | 
-          cd api
           npm install
-          echo MONGO_URL="mongodb+srv://aestradaa10:8C1lW1hktkdWvCda@database.2bnxshh.mongodb.net/?retryWrites=true&w=majority&appName=database" > .env
           npm run build
-          
-      # Set up SSH key from GitHub Secrets
-      - name: Set up SSH key
+          echo MONGO_URL="mongodb+srv://aestradaa10:8C1lW1hktkdWvCda@database.2bnxshh.mongodb.net/?retryWrites=true&w=majority&appName=database" > .env
+        working-directory: ./api
+                
+      # Configurar la clave SSH desde los secretos de GitHub
+      - name: Configurar clave SSH
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.SSH_HOST1 }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets[format('SSH_HOST_{0}', matrix.host)] }} >> ~/.ssh/known_hosts
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          SSH_HOST: ${{ secrets.SSH_HOST1 }}
+          SSH_HOST: ${{ secrets[format('SSH_HOST_{0}', matrix.host)] }}
 
-      # Deploy to remote host via SSH
-      - name: Deploy to Remote Server
+      # Desplegar en el servidor remoto a través de SSH
+      - name: Desplegar en el servidor remoto
         run: |
-          echo "====== Deploy to production server ======"
-          echo "====== Sync local and remote directory ======"
-          rsync -azPq -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" --delete ./api/build/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST1 }}:/home/ubuntu/backend/ --rsync-path="sudo rsync"
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST1 }} 'pm2 delete backend && pm2 start /home/ubuntu/backend/index.js --name backend'
+          echo "====== Desplegar en el servidor de producción ======"
+          echo "====== Sincronizar directorio local y remoto ======"
+          rsync -azPq -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" --delete ./api/build/ ${{ secrets.SSH_USER }}@${{ secrets[format('SSH_HOST_{0}', matrix.host)] }}:/home/ubuntu/frontend/ --rsync-path="sudo rsync"
+          rsync -azPq -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" --delete ./api/ ${{ secrets.SSH_USER }}@${{ secrets[format('SSH_HOST_{0}', matrix.host)] }}:/home/ubuntu/backend/ --exclude 'build' --rsync-path="sudo rsync"
+          ssh ${{ secrets.SSH_USER }}@${{ secrets[format('SSH_HOST_{0}', matrix.host)] }} 'pm2 delete backend && pm2 start /home/ubuntu/backend/index.js --name backend'
         env:
           SSH_USER: ${{ secrets.SSH_USER }}
-          SSH_HOST: ${{ secrets.SSH_HOST1 }}
-        
-  host-2:
-    runs-on: CRUD  # Ajusta el runner si es necesario
-    steps:
-      - uses: actions/checkout@v3
-      
-      # Setup Node.js with version 20
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: 20
-      
-      # Install dependencies
-      - name: Install Dependencies
-        run: | 
-          cd api
-          npm install
-          echo MONGO_URL="mongodb+srv://aestradaa10:8C1lW1hktkdWvCda@database.2bnxshh.mongodb.net/?retryWrites=true&w=majority&appName=database" > .env
-          npm run build
-
-      # Set up SSH key from GitHub Secrets
-      - name: Set up SSH key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.SSH_HOST2 }} >> ~/.ssh/known_hosts
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          SSH_HOST: ${{ secrets.SSH_HOST2 }}
-
-      # Deploy to remote host via SSH
-      - name: Deploy to Remote Server
-        run: |
-          echo "====== Deploy to production server ======"
-          echo "====== Sync local and remote directory ======"
-          rsync -azPq -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" --delete ./api/build/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST2 }}:/home/ubuntu/backend/ --rsync-path="sudo rsync"
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST2 }} 'pm2 delete backend && pm2 start /home/ubuntu/backend/index.js --name backend'
-        env:
-          SSH_USER: ${{ secrets.SSH_USER }}
-          SSH_HOST: ${{ secrets.SSH_HOST2 }}
+          SSH_HOST: ${{ secrets[format('SSH_HOST_{0}', matrix.host)] }}
