@@ -23,7 +23,7 @@ jobs:
           npm install
           echo MONGO_URL="mongodb+srv://aestradaa10:8C1lW1hktkdWvCda@database.2bnxshh.mongodb.net/?retryWrites=true&w=majority&appName=database" > .env
           npm run build
-        working-directory: api
+      
                 
       # Set up SSH key from GitHub Secrets
       - name: Set up SSH key
@@ -47,7 +47,7 @@ jobs:
         env:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_HOST: ${{ secrets.SSH_HOST1 }}
-        working-directory: api
+      
   host-2:
     runs-on: CRUD  
     steps:
@@ -65,7 +65,7 @@ jobs:
           npm install
           echo MONGO_URL="mongodb+srv://aestradaa10:8C1lW1hktkdWvCda@database.2bnxshh.mongodb.net/?retryWrites=true&w=majority&appName=database" > .env
           npm run build
-        working-directory: api
+
                 
       # Set up SSH key from GitHub Secrets
       - name: Set up SSH key
@@ -88,4 +88,4 @@ jobs:
         env:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_HOST: ${{ secrets.SSH_HOST2 }}
-        working-directory: api
+      
