@@ -3,14 +3,14 @@ name: Deploy Web App - Backend
 on:
   push:
     branches:
-      - main  # Use the branch you use for production
-    
+      - main  # Usa la rama que utilizas para producción
+
 jobs:
   deploy:
     runs-on: CRUD  # Ajusta el runner si es necesario
     strategy:
       matrix:
-        host: [host1, host2]  # Configurar dos hosts para el despliegue
+        host: [SSH_HOST1, SSH_HOST2]  # Configurar dos hosts para el despliegue
     steps:
       - uses: actions/checkout@v3
 
