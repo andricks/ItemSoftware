@@ -17,7 +17,7 @@ jobs:
           node-version: '20'
 
       - name: Install Dependencies
-        working-directory: server
+        working-directory: api
         run: |
           npm install
           echo MONGODB_URI = "mongodb+srv://aestradaa10:8C1lW1hktkdWvCda@database.2bnxshh.mongodb.net/?retryWrites=true&w=majority&appName=database" > .env
@@ -33,7 +33,7 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST1 }}
 
       - name: Deploy to Remote Server
-        working-directory: server
+        working-directory: api
         run: |
           echo "====== Deploy to production server ======"
           echo "====== Sync local and remote directory ======"
@@ -55,7 +55,7 @@ jobs:
           node-version: '20'
 
       - name: Install Dependencies
-        working-directory: server
+        working-directory: api
         run: |
           npm install
           echo MONGODB_URI = "mongodb+srv://aestradaa10:8C1lW1hktkdWvCda@database.2bnxshh.mongodb.net/?retryWrites=true&w=majority&appName=database" > .env
@@ -71,7 +71,7 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST2 }}
 
       - name: Deploy to Remote Server
-        working-directory: server
+        working-directory: api
         run: |
           echo "====== Deploy to production server ======"
           echo "====== Sync local and remote directory ======"

@@ -19,12 +19,12 @@ jobs:
       
       # Install dependencies
       - name: Install Dependencies
-        working-directory: ./ 
+        working-directory: ItemSoftware
         run: npm install
       
       # Create .env file in public directory
       - name: Adding env file
-        run: echo "REACT_APP_API_URL=${{ secrets.BACKEND_URL }}" > Frontend/inventory_management_system/.env
+        run: echo "REACT_APP_API_URL=${{ secrets.BACKEND_URL }}" > ItemSoftware/.env
 
       # Build the React app in the public directory
       - name: Build React App
@@ -73,7 +73,7 @@ jobs:
       
       # Create .env file in public directory
       - name: Adding env file
-        run: echo "REACT_APP_API_URL=${{ secrets.BACKEND_URL }}" > Frontend/inventory_management_system/.env
+        run: echo "REACT_APP_API_URL=${{ secrets.BACKEND_URL }}" > ItemSoftware/.env
 
       # Build the React app in the public directory
       - name: Build React App
