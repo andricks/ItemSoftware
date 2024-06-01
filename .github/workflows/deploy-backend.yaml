@@ -3,7 +3,7 @@ name: Deploy Web App - Backend
 on:
   push:
     branches:
-      - main  # Use the branch que utilizas para producción
+      - main  # Use the branch you use for production
     
 jobs:
   deploy:
@@ -34,7 +34,7 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets[matrix.host] }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H "${{ secrets[matrix.host] }}" >> ~/.ssh/known_hosts
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
