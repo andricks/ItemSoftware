@@ -34,19 +34,17 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets[format('SSH_HOST_{0}', matrix.host)] }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets[matrix.host] }} >> ~/.ssh/known_hosts
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          SSH_HOST: ${{ secrets[format('SSH_HOST_{0}', matrix.host)] }}
 
       # Desplegar en el servidor remoto a través de SSH
       - name: Desplegar en el servidor remoto
         run: |
           echo "====== Desplegar en el servidor de producción ======"
           echo "====== Sincronizar directorio local y remoto ======"
-          rsync -azPq -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" --delete ./api/build/ ${{ secrets.SSH_USER }}@${{ secrets[format('SSH_HOST_{0}', matrix.host)] }}:/home/ubuntu/frontend/ --rsync-path="sudo rsync"
-          rsync -azPq -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" --delete ./api/ ${{ secrets.SSH_USER }}@${{ secrets[format('SSH_HOST_{0}', matrix.host)] }}:/home/ubuntu/backend/ --exclude 'build' --rsync-path="sudo rsync"
-          ssh ${{ secrets.SSH_USER }}@${{ secrets[format('SSH_HOST_{0}', matrix.host)] }} 'pm2 delete backend && pm2 start /home/ubuntu/backend/index.js --name backend'
+          rsync -azPq -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" --delete ./api/build/ ${{ secrets.SSH_USER }}@${{ secrets[matrix.host] }}:/home/ubuntu/frontend/ --rsync-path="sudo rsync"
+          rsync -azPq -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" --delete ./api/ ${{ secrets.SSH_USER }}@${{ secrets[matrix.host] }}:/home/ubuntu/backend/ --exclude 'build' --rsync-path="sudo rsync"
+          ssh ${{ secrets.SSH_USER }}@${{ secrets[matrix.host] }} 'pm2 delete backend && pm2 start /home/ubuntu/backend/index.js --name backend'
         env:
           SSH_USER: ${{ secrets.SSH_USER }}
-          SSH_HOST: ${{ secrets[format('SSH_HOST_{0}', matrix.host)] }}
