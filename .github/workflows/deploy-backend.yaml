@@ -27,14 +27,18 @@ jobs:
           npm run build
           echo MONGO_URL="mongodb+srv://aestradaa10:8C1lW1hktkdWvCda@database.2bnxshh.mongodb.net/?retryWrites=true&w=majority&appName=database" > .env
         working-directory: ./api
-                
+
+      # Verificar la estructura del directorio
+      - name: Listar archivos en el directorio de trabajo
+        run: ls -la ./api
+
       # Configurar la clave SSH desde los secretos de GitHub
       - name: Configurar clave SSH
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H "${{ secrets[matrix.host] }}" >> ~/.ssh/known_hosts
+          ssh-keyscan -H "${{ secrets[matrix.host] }}" >> ~/.ssh/known_hosts 2>> error.log || cat error.log
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
