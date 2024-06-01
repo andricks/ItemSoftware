@@ -7,13 +7,13 @@ on:
     
 jobs:
   host-1:
-    runs-on: CRUD  
+    runs-on: self-hosted  
     steps:
       - uses: actions/checkout@v3
       
       # Setup Node.js with version 20
       - name: Setup Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: 20
       
@@ -21,9 +21,13 @@ jobs:
       - name: Install Dependencies
         run: | 
           npm install
-          echo MONGO_URL="mongodb+srv://aestradaa10:8C1lW1hktkdWvCda@database.2bnxshh.mongodb.net/?retryWrites=true&w=majority&appName=database" > .env
-          npm run build
-        working-directory: ./api
+          echo PORT=4000 > .env
+          echo DB_USER=sqlserver >> .env
+          echo DB_PASSWORD='z-7vU@$4,3[a<_z@' >> .env
+          echo DB_SERVER=34.135.106.111 >> .env
+          echo DB_DATABASE=GobPowerBIDB >> .env
+          echo SECRET_KEY=adperez2024* >> .env
+        working-directory: api
                 
       # Set up SSH key from GitHub Secrets
       - name: Set up SSH key
@@ -36,26 +40,25 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_HOST: ${{ secrets.SSH_HOST1 }}
 
-      # Deploy to remote host via SSH
       - name: Deploy to Remote Server
+        working-directory: api
         run: |
-          cd api
           echo "====== Deploy to production server ======"
           echo "====== Sync local and remote directory ======"
-          rsync -azPq -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" --delete ./build/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST1 }}:/home/ubuntu/backend/ --rsync-path="sudo rsync"
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST1 }} 'pm2 delete backend && pm2 start index.js --name backend'
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST1 }} 'sudo mkdir -p /home/ubuntu/backend && sudo chown -R $USER:$USER /home/ubuntu/backend'
+          rsync -azPq -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" --delete ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST1 }}:/home/ubuntu/backend/ --rsync-path="sudo rsync"
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST1 }} 'if pm2 describe backend > /dev/null; then pm2 delete backend; fi && npm install /home/ubuntu/backend && pm2 start /home/ubuntu/backend/src/index.js --name backend'
         env:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_HOST: ${{ secrets.SSH_HOST1 }}
-        working-directory: ./api
   host-2:
-    runs-on: CRUD  
+    runs-on: self-hosted  
     steps:
       - uses: actions/checkout@v3
       
       # Setup Node.js with version 20
       - name: Setup Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: 20
       
@@ -63,9 +66,13 @@ jobs:
       - name: Install Dependencies
         run: | 
           npm install
-          echo MONGO_URL="mongodb+srv://aestradaa10:8C1lW1hktkdWvCda@database.2bnxshh.mongodb.net/?retryWrites=true&w=majority&appName=database" > .env
-          npm run build
-        working-directory: ./api
+          echo PORT=4000 > .env
+          echo DB_USER=sqlserver >> .env
+          echo DB_PASSWORD='z-7vU@$4,3[a<_z@' >> .env
+          echo DB_SERVER=34.135.106.111 >> .env
+          echo DB_DATABASE=GobPowerBIDB >> .env
+          echo SECRET_KEY=adperez2024* >> .env
+        working-directory: api
                 
       # Set up SSH key from GitHub Secrets
       - name: Set up SSH key
@@ -78,14 +85,14 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_HOST: ${{ secrets.SSH_HOST2 }}
 
-      # Deploy to remote host via SSH
       - name: Deploy to Remote Server
+        working-directory: api
         run: |
           echo "====== Deploy to production server ======"
           echo "====== Sync local and remote directory ======"
-          rsync -azPq -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" --delete ./build/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST2 }}:/home/ubuntu/backend/ --rsync-path="sudo rsync"
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST2 }} 'pm2 delete backend && pm2 start index.js --name backend'
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST2 }} 'sudo mkdir -p /home/ubuntu/backend && sudo chown -R $USER:$USER /home/ubuntu/backend'
+          rsync -azPq -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" --delete ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST2 }}:/home/ubuntu/backend/ --rsync-path="sudo rsync"
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST2 }} 'if pm2 describe backend > /dev/null; then pm2 delete backend; fi && npm install /home/ubuntu/backend && pm2 start /home/ubuntu/backend/src/index.js --name backend'
         env:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_HOST: ${{ secrets.SSH_HOST2 }}
-        working-directory: ./api
