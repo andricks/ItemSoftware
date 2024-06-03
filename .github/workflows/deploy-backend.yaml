@@ -19,7 +19,7 @@ jobs:
       
       # Install dependencies
       - name: Install Dependencies
-        working-directory: .
+        working-directory: api
         run: | 
           npm install
           echo MONGO_URL="mongodb+srv://aestradaa10:8C1lW1hktkdWvCda@database.2bnxshh.mongodb.net/?retryWrites=true&w=majority&appName=database" > .env
@@ -63,7 +63,7 @@ jobs:
       
       # Install dependencies
       - name: Install Dependencies
-        working-directory: .
+        working-directory: api
         run: | 
           npm install
           echo MONGO_URL="mongodb+srv://aestradaa10:8C1lW1hktkdWvCda@database.2bnxshh.mongodb.net/?retryWrites=true&w=majority&appName=database" > .env
