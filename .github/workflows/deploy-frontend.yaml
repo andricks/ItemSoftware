@@ -3,7 +3,7 @@ name: Deploy Web App - Frontend
 on:
   push:
     branches:
-      - main  # Use the branch you use for production
+      - master  # Use the branch you use for production
 
 jobs:
   host-1:
@@ -19,15 +19,19 @@ jobs:
       
       # Install dependencies
       - name: Install Dependencies
+        working-directory: Frontend 
         run: npm install
       
+      # Create .env file in public directory
       - name: Adding env file
-        run: |
-          echo REACT_APP_API_URL="${{ secrets.BACKEND_URL }}" > .env
+        run: echo "REACT_APP_API_URL=${{ secrets.BACKEND_URL }}" > Frontend/.env
 
-      # Build the React app
+      # Build the React app in the public directory
       - name: Build React App
-        run: npm run build
+        working-directory: Frontend
+        run: |
+          npm install
+          npm run build
 
       # Set up SSH key from GitHub Secrets
       - name: Set up SSH key
@@ -42,6 +46,7 @@ jobs:
 
       # Deploy to remote host via SSH
       - name: Deploy to Remote Server
+        working-directory: Frontend
         run: |
           echo "====== Deploy to production server ======"
           echo "====== Sync local and remote directory ======"
@@ -50,8 +55,9 @@ jobs:
         env:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_HOST: ${{ secrets.SSH_HOST1 }}
+          
   host-2:
-    runs-on: self-hosted  
+    runs-on: CRUD 
     steps:
       - uses: actions/checkout@v3
       
@@ -63,15 +69,19 @@ jobs:
       
       # Install dependencies
       - name: Install Dependencies
+        working-directory: Frontend
         run: npm install
       
+      # Create .env file in public directory
       - name: Adding env file
-        run: |
-          echo REACT_APP_API_URL="${{ secrets.BACKEND_URL }}" > .env
+        run: echo "REACT_APP_API_URL=${{ secrets.BACKEND_URL }}" > Frontend/.env
 
-      # Build the React app
+      # Build the React app in the public directory
       - name: Build React App
-        run: npm run build
+        working-directory: Frontend
+        run: |
+          npm install
+          npm run build
 
       # Set up SSH key from GitHub Secrets
       - name: Set up SSH key
@@ -86,6 +96,7 @@ jobs:
 
       # Deploy to remote host via SSH
       - name: Deploy to Remote Server
+        working-directory: Frontend
         run: |
           echo "====== Deploy to production server ======"
           echo "====== Sync local and remote directory ======"
@@ -94,8 +105,3 @@ jobs:
         env:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_HOST: ${{ secrets.SSH_HOST2 }}
-
-  
-
-
-
