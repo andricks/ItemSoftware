@@ -9,7 +9,7 @@ const CreateItem = () => {
     const handleSubmit = (event) => {
         event.preventDefault();
         const newItem = { name, description };
-        axios.post('http://localhost:4000/items', newItem)
+        axios.post(process.env.REACT_APP_API_URL , newItem)
             .then(response => {
                 console.log(response.data);
                 setName('');

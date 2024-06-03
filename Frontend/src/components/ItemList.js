@@ -8,7 +8,7 @@ const ItemList = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        axios.get('http://localhost:4000/items')
+        axios.get(process.env.REACT_APP_API_URL)
             .then(response => {
                 setItems(response.data);
             })
