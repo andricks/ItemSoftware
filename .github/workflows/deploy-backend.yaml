@@ -7,7 +7,7 @@ on:
 
 jobs:
   host-1:
-    runs-on: ubuntu-latest
+    runs-on: CRUD
     steps:
       - uses: actions/checkout@v3
       
@@ -48,7 +48,7 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST1 }}
 
   host-2:
-    runs-on: ubuntu-latest
+    runs-on: CRUD
     steps:
       - uses: actions/checkout@v3
       
