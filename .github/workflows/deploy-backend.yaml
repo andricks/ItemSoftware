@@ -22,7 +22,7 @@ jobs:
         working-directory: api
         run: | 
           npm install
-          echo MONGO_URL="mongodb+srv://aestradaa10:8C1lW1hktkdWvCda@database.2bnxshh.mongodb.net/crud?retryWrites=true&w=majority" > .env
+          echo MONGO_URL="mongodb+srv://Frnn:noobculo@mongocluster.o2eojyk.mongodb.net/snappy?retryWrites=true&w=majority" > .env
       
       # Set up SSH key from GitHub Secrets
       - name: Set up SSH key
@@ -64,7 +64,7 @@ jobs:
         working-directory: api
         run: | 
           npm install
-          echo MONGO_URL="mongodb+srv://aestradaa10:8C1lW1hktkdWvCda@database.2bnxshh.mongodb.net/crud?retryWrites=true&w=majority" > .env
+          echo MONGO_URL="mongodb+srv://Frnn:noobculo@mongocluster.o2eojyk.mongodb.net/snappy?retryWrites=true&w=majority" > .env
       
       # Set up SSH key from GitHub Secrets
       - name: Set up SSH key
